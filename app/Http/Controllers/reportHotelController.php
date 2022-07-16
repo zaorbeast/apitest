@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\reportHotelRessource;
 use App\Models\reportHotel;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class reportHotelController extends Controller
 {
@@ -15,7 +17,7 @@ class reportHotelController extends Controller
      */
     public function index()
     {
-        $reportHotel=reportHotel::paginate(10);
+        $reportHotel=reportHotel::where('report_hotels.state',1)->paginate();
         return reportHotelRessource::collection($reportHotel);
     }
 
@@ -37,14 +39,33 @@ class reportHotelController extends Controller
      */
     public function store(Request $request)
     {
-        $reportHotel=new reportHotel();
-        $reportHotel->idUser=$request->idUser;
-        $reportHotel->Message=$request->Message;
-        $reportHotel->idhotel=$request->idhotel;
-        if ($reportHotel->save())
-         {
-            return new reportHotelRessource($reportHotel);
+        $rules = array('idUser'=>'required','Message'=>'required','idhotel'=>'required');
+        $validat=Validator::make($request->all(),$rules);
+        if ($validat->fails()) {
+            return response()->json( $validat->errors(),400);
+        } else {
+            $Message=explode(' ',$request->Message);
+            if ($Message>500) {
+                return response()->json("Message too long",400);
+            } else {
+                try{
+                    $reportHotel=new reportHotel();
+                    $reportHotel->idUser=$request->idUser;
+                    $reportHotel->Message=$request->Message;
+                    $reportHotel->idhotel=$request->idhotel;
+                    if ($reportHotel->save())
+                     {
+                        return new reportHotelRessource($reportHotel);
+                    }
+                }catch(Exception $e){
+                    return response()->json( $e,400);
+                }
+            }
+
+
         }
+
+
     }
 
     /**
@@ -96,5 +117,40 @@ class reportHotelController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function getReportByUser($id,$state)
+    {
+        if ($state==1) {
+            $reportHotel=reportHotel::where('report_hotels.state',1)
+            ->where('report_hotels.idUser',$id)
+            ->paginate();
+        return reportHotelRessource::collection($reportHotel);
+        } else {
+            if ($state==0) {
+                $reportHotel=reportHotel::where('report_hotels.state',0)
+                ->where('report_hotels.idUser',$id)
+                ->paginate();
+            return reportHotelRessource::collection($reportHotel);
+            }
+
+        }
+
+    }
+    public function getByUserHotel($idUser,$idHotel,$state)
+    {
+      if ($state==1) {
+        $reportHotel=reportHotel::where('report_hotels.idUser',$idUser)
+        ->where('report_hotels.idhotel',$idHotel)
+        ->where('report_hotels.state',1)->paginate();
+        return reportHotelRessource::collection($reportHotel);
+      } else {
+        if ($state==0) {
+          $reportHotel=reportHotel::where('report_hotels.idUser',$idUser)
+          ->where('report_hotels.idhotel',$idHotel)
+          ->where('report_hotels.state',0)->paginate();
+          return reportHotelRessource::collection($reportHotel);
+        }
+      }
+
     }
 }

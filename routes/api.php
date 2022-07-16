@@ -22,17 +22,25 @@ use Database\Factories\reportTouristicFactory;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('/reportHouse', [reportHouseController::class,'index']);
-Route::post('/addreportHouse', [reportHouseController::class,'store']);
-Route::get('getreporthose/{id}',[reportHouseController::class,'show']);
-Route::put('/updatereportHouse/{id}',[reportHouseController::class,'update']);
 
-Route::get('/reportHotel', [reportHotelController::class,'index']);
-Route::post('/addreportHotel', [reportHotelController::class,'store']);
-Route::get('getreporthotel/{id}',[reportHotelController::class,'show']);
-Route::put('/updatereportHotel/{id}',[reportHotelController::class,'update']);
+Route::get('/report-house', [reportHouseController::class,'index']);
+Route::post('/add-report-house', [reportHouseController::class,'store']);
+Route::get('get-report-house/{id}',[reportHouseController::class,'show']);
+Route::put('/update-report-House/{id}',[reportHouseController::class,'update']);
+Route::get('/get-report-house-byuser/{id}/{state}',[reportHouseController::class,'getbyuser']);
+Route::get('/get-report-house-byUSer-byHouse/{idUser}/{idHouse}/{state}',[reportHouseController::class,'getByUserByHouse']);
 
-Route::get('/reportTouristic', [reportTouristicController::class,'index']);
-Route::post('/addreportTouristic', [reportTouristicController::class,'store']);
-Route::get('getreportTouristic/{id}',[reportTouristicController::class,'show']);
-Route::put('/updatereportTouristic/{id}',[reportTouristicController::class,'update']);
+
+Route::get('/report-Hotel', [reportHotelController::class,'index']);
+Route::post('/add-report-Hotel', [reportHotelController::class,'store']);
+Route::get('get-report-hotel/{id}',[reportHotelController::class,'show']);
+Route::put('/update-report-Hotel/{id}',[reportHotelController::class,'update']);
+Route::get('/get-report-hotel-byUSer/{id}/{state}',[reportHotelController::class,'getReportByUser']);
+Route::get('/get-report-byUser-byHotel/{idUser}/{idHotel}/{state}',[reportHotelController::class,'getByUserHotel']);
+
+Route::get('/report-Touristic', [reportTouristicController::class,'index']);
+Route::post('/add-report-Touristic', [reportTouristicController::class,'store']);
+Route::get('get-report-Touristic/{id}',[reportTouristicController::class,'show']);
+Route::put('/update-report-Touristic/{id}',[reportTouristicController::class,'update']);
+Route::get('/get-report-touristic-byUser/{id}/{state}',[reportTouristicController::class,'getTouristicByUser']);
+Route::get('/get-report-touristic-byUSer-byHouse/{idUser}/{idTouristic}/{state}',[reportTouristicController::class,'getByUserHotel']);

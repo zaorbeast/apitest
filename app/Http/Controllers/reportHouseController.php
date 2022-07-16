@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\reportHouseRessource;
 use App\Models\reportHouse;
+use Exception;
+use Illuminate\Database\Console\Migrations\StatusCommand;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class reportHouseController extends Controller
 {
@@ -15,7 +18,7 @@ class reportHouseController extends Controller
      */
     public function index()
     {
-        $reportHouse=reportHouse::paginate(10);
+        $reportHouse=reportHouse::where('report_houses.state',1)->paginate(10);
         return reportHouseRessource::collection($reportHouse);
     }
 
@@ -37,14 +40,33 @@ class reportHouseController extends Controller
      */
     public function store(Request $request)
     {
-        $reportHouse=new reportHouse();
-        $reportHouse->idUser=$request->idUser;
-        $reportHouse->Message=$request->Message;
-        $reportHouse->idhouse=$request->idhouse;
-        if ($reportHouse->save())
-         {
-            return new reportHouseRessource($reportHouse);
+        $rules = array('idUser'=>'required','Message'=>'required','idhouse'=>'required');
+        $validat= Validator::make($request->all(),$rules);
+        if ($validat->fails()) {
+            return response()->json( $validat->errors(),400);
+        } else {
+            $message=explode(' ',$request->Message);
+            if ($message>500) {
+                return response()->json("Message too long",400);
+            } else {
+                try{
+                    $reportHouse=new reportHouse();
+                    $reportHouse->idUser=$request->idUser;
+                    $reportHouse->Message=$request->Message;
+                    $reportHouse->idhouse=$request->idhouse;
+                    if ($reportHouse->save())
+                     {
+                        return new reportHouseRessource($reportHouse);
+                    }
+                }catch(Exception $e){
+                    return response()->json( $e,400);
+                }
+            }
+
+
         }
+
+
     }
 
     /**
@@ -55,7 +77,7 @@ class reportHouseController extends Controller
      */
     public function show($id)
     {
-        $reportHouse=reportHouse::findOrFail($id);
+        $reportHouse=reportHouse::where('report_houses.idhouse',$id)->get();
         return new reportHouseRessource($reportHouse);
     }
 
@@ -96,5 +118,36 @@ class reportHouseController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function getbyuser($id,$state)
+    {
+        if ($state==1) {
+            $reportHouse=reportHouse::where('report_houses.idUser',$id)
+            ->where('report_houses.state',1)
+            ->paginate(10);
+        return new reportHouseRessource($reportHouse);
+        } else {
+            $reportHouse=reportHouse::where('report_houses.idUser',$id)
+            ->where('report_houses.state',0)
+            ->paginate(10);
+        return new reportHouseRessource($reportHouse);
+        }
+    }
+    public function getByUserByHouse($idUser,$idhouse,$state)
+    {
+      if ($state==1) {
+        $reportHouse=reportHouse::where('report_houses.idUser',$idUser)
+        ->where('report_houses.idhouse',$idhouse)
+        ->where('report_houses.state',1)->paginate(10);
+        return new reportHouseRessource($reportHouse);
+      } else {
+        if ($state==0) {
+          $reportHouse=reportHouse::where('report_houses.idUser',$idUser)
+          ->where('report_houses.idhouse',$idhouse)
+          ->where('report_houses.state',0)->paginate(10);
+          return new reportHouseRessource($reportHouse);
+        }
+      }
+
     }
 }
