@@ -16,7 +16,7 @@ class CreateReportHousesTable extends Migration
         Schema::create('report_houses', function (Blueprint $table) {
             $table->id();
             $table->integer('idUser');
-            $table->string('Message');
+            $table->text('Message');
             $table->integer('idhouse');
             $table->boolean('state')->default(true);
             $table->timestamps();

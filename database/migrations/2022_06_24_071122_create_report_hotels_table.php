@@ -16,7 +16,7 @@ class CreateReportHotelsTable extends Migration
         Schema::create('report_hotels', function (Blueprint $table) {
             $table->id();
             $table->integer('idUser');
-            $table->string('Message');
+            $table->text('Message');
             $table->integer('idhotel');
             $table->boolean('state')->default(true);
             $table->timestamps();

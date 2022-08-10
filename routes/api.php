@@ -3,10 +3,11 @@
 use App\Models\reportHouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\reportUserController;
+use Database\Factories\reportTouristicFactory;
 use App\Http\Controllers\reportHotelController;
 use App\Http\Controllers\reportHouseController;
 use App\Http\Controllers\reportTouristicController;
-use Database\Factories\reportTouristicFactory;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,3 +45,10 @@ Route::get('get-report-Touristic/{id}',[reportTouristicController::class,'show']
 Route::put('/update-report-Touristic/{id}',[reportTouristicController::class,'update']);
 Route::get('/get-report-touristic-byUser/{id}/{state}',[reportTouristicController::class,'getTouristicByUser']);
 Route::get('/get-report-touristic-byUSer-byHouse/{idUser}/{idTouristic}/{state}',[reportTouristicController::class,'getByUserHotel']);
+
+Route::post('/add-report-user',[reportUserController::class,'store']);
+Route::get('/report-user',[reportUserController::class,'index']);
+Route::get('/get-report-user/{id}',[reportUserController::class,'show']);
+Route::put('Update-report-User/{id}',[reportUserController::class,'edit']);
+Route::get('get-report-user-byUser/{id}/{state}',[reportUserController::class,'getReportUserByUser']);
+Route::get('/get-report-user-byUser/{id}/{idReported}/{state}',[reportUserController::class,'getByuser']);

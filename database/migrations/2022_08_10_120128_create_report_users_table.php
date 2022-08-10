@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateReportTouristicsTable extends Migration
+class CreateReportUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateReportTouristicsTable extends Migration
      */
     public function up()
     {
-        Schema::create('report_touristics', function (Blueprint $table) {
+        Schema::create('report_users', function (Blueprint $table) {
             $table->id();
-            $table->integer('idUser');
-            $table->text('Message');
-            $table->integer('idTouristic');
-            $table->boolean('state')->default(true);
+            $table->integer('idUser')->nullable();
+            $table-> text('Message'); //string('Message');
+            $table->integer('idReportedUser');
+            $table->boolean('state')->default('1');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ class CreateReportTouristicsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('report_touristics');
+        Schema::dropIfExists('report_users');
     }
 }
